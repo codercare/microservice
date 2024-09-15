@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 8001:8000
+    depends_on:
+      - front_db
+  front_db:
+    image: mysql:5.7.22
+    environment:
+      MYSQL_DATABASE: front
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./storage/dbdata:/var/lib/mysql
+    ports:
+      - 33064:3306
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - front_db
+    ports:
+      - "8083:80" # Exposes phpMyAdmin on port 8080
+    environment:
+      PMA_HOST: front_db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
